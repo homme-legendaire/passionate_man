@@ -40,12 +40,11 @@ void mergeSort(int* a, int* sorted, int m, int n) {
 	}
 }
 int binarySearch(int* a, int t, int m, int n) {
-	while (m <= n) {
-		int middle = (m + n) / 2;
-		if (a[middle] == t) return middle;
-		else if (a[middle] > t) return binarySearch(a, t, m, middle - 1);
-		else return binarySearch(a, t, middle + 1, n);
-	}
+	if (m > n) return 5;
+	int middle = (m + n) / 2;
+	if (a[middle] == t) return middle;
+	else if (a[middle] > t) return binarySearch(a, t, m, middle - 1);
+	else return binarySearch(a, t, middle + 1, n);
 }
 int main() {
 	int N, * a = NULL, * sorted = NULL, M, b, x = 0;
