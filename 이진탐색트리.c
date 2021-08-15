@@ -125,6 +125,7 @@ int main() {
 	insert(root, 7);
 	insert(root, 9);
 	insert(root, 5);
+	printf("%p\n", Search(root, 7));
 	delete(root, 5);
 	inorder(root);
 }
