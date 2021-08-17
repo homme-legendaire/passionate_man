@@ -8,59 +8,44 @@ typedef struct NODE {
 }NODE;
 void getNode(NODE** p) {
 	(*p) = (NODE*)malloc(sizeof(NODE));
+	(*p)->left = NULL, (*p)->right = NULL;
 }
-NODE *Search(NODE* p, int e) {
-	while (p != NULL) {
-		if (p->data == e) {
-			return p;
-		}
-		else if (p->data > e) {
-			p = p->left;
-		}
-		else {
-			p = p->right;
-		}
-	}
-	return NULL;
-}
-NODE *insert(NODE* p, int e) {
-	NODE* parent = NULL, * new = NULL;
-	getNode(&parent);
+NODE* insert(NODE* p, int e) {
+	NODE* new = NULL;
 	getNode(&new);
 	new->data = e;
-	new->left = new->right = NULL;
-	while (p != NULL) {
-		parent = p;
-		if (p->data == e) {
-			return p;
-		}
-		else if (p->data > e) {
-			p = p->left;
+	if (p == NULL) return new;
+	if (p->data > e) {
+		if (p->left == NULL) {
+			p->left = new;
 		}
 		else {
-			p = p->right;
+			return insert(p->left, e);
 		}
 	}
-	if (parent != NULL) {
-		if (parent->data < e) {
-			parent->right = new;
+	else {
+		if (p->right == NULL) {
+			p->right = new;
 		}
 		else {
-			parent->left = new;
+			return insert(p->right, e);
 		}
 	}
 	return new;
 }
 void delete(NODE* p, int e) {
-	NODE* parent = NULL, * new = NULL;
+	NODE* parent = NULL, * child = NULL;
 	getNode(&parent);
-	while (p != NULL && p->data != e) {
+	while (p != NULL) {
 		parent = p;
 		if (p->data > e) {
 			p = p->left;
 		}
-		else {
+		else if (p->data < e) {
 			p = p->right;
+		}
+		else {
+			break;
 		}
 	}
 	if (p->left == NULL && p->right == NULL) {
@@ -71,23 +56,27 @@ void delete(NODE* p, int e) {
 			if (parent->left == p) {
 				parent->left = NULL;
 			}
-			if (parent->right == p) {
+			else if (parent->right == p) {
 				parent->right = NULL;
 			}
 		}
 	}
 	else if (p->left == NULL || p->right == NULL) {
-		if (p->left != NULL) new = p->left;
-		else if (p->right != NULL) new = p->right;
+		if (p->left != NULL) {
+			child = p->left;
+		}
+		else if (p->right != NULL) {
+			child = p->right;
+		}
 		if (parent == NULL) {
-			p = new;
+			p = child;
 		}
 		else {
 			if (parent->left == p) {
-				parent->left = new;
+				parent->left = child;
 			}
-			if (parent->right == p) {
-				parent->right = new;
+			else if (parent->right == p) {
+				parent->right = child;
 			}
 		}
 	}
@@ -102,7 +91,7 @@ void delete(NODE* p, int e) {
 		if (succ_parent->left == succ) {
 			succ_parent->left = succ->right;
 		}
-		if (succ_parent->right == succ) {
+		else if (succ_parent->right == succ) {
 			succ_parent->right = succ->right;
 		}
 		p = succ;
@@ -110,22 +99,26 @@ void delete(NODE* p, int e) {
 	free(p);
 }
 void inorder(NODE* p) {
-	if (p != NULL) {
-		if (p->left != NULL) inorder(p->left);
-		printf("%d ", p->data);
-		if (p->right != NULL) inorder(p->right);
-	}
+	if (p->left != NULL) inorder(p->left);
+	printf("%d ", p->data);
+	if (p->right != NULL) inorder(p->right);
 }
 int main() {
-	NODE* root = NULL;
-	getNode(&root);
-	root = insert(NULL, 6);
-	insert(root, 3);
-	insert(root, 1);
-	insert(root, 7);
-	insert(root, 9);
-	insert(root, 5);
-	printf("%p\n", Search(root, 7));
-	delete(root, 5);
-	inorder(root);
+	int e;
+	NODE* p = NULL;
+	getNode(&p);
+	for (int i = 0; i < 10; i++) {
+		scanf("%d", &e);
+		if (i == 0) {
+			p = insert(NULL, e);
+		}
+		else {
+			insert(p, e);
+		}
+	}
+	inorder(p);
+	printf("\n");
+	scanf("%d", &e);
+	delete(p, e);
+	inorder(p);
 }
